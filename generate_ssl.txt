@@ -1,0 +1,53 @@
+openssl genrsa -out ca.key 4096
+
+openssl req -x509 -new -nodes -sha512 -days 3650 \
+ -subj "C=US/ST=STATE/L=LOCATION/O=ORGANIZATION/OU=Dev/CN=registry" \
+ -key ca.key \
+ -out ca.crt
+
+ openssl genrsa -out ORG.com.key 4096
+
+ openssl req -sha512 -new \
+     -subj "/C=US/ST=STATE/L=LOCATION/O=ORGANIZATION/OU=Dev/CN=registry" \
+     -key ORG.com.key \
+     -out ORG.com.csr
+
+
+cat > v3.ext <<-EOF
+     authorityKeyIdentifier=keyid,issuer
+     basicConstraints=CA:FALSE
+     keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+     extendedKeyUsage = serverAuth
+     subjectAltName = @alt_names
+
+     [alt_names]
+     DNS.1=registry.example.com
+     DNS.2=registry.example.local
+     DNS.3=registry
+     EOF
+
+
+openssl x509 -req -sha512 -days 3650 \
+    -extfile v3.ext \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -in ORG.com.csr \
+    -out ORG.com.crt
+
+
+
+sudo cp ORG.com.crt /data/cert/
+sudo cp ORG.com.key /data/cert/
+
+
+openssl x509 -inform PEM -in ORG.com.crt -out ORG.com.cert
+
+
+sudo cp ORG.com.cert /etc/docker/certs.d/ORG.com/
+sudo cp ORG.com.key /etc/docker/certs.d/ORG.com/
+sudo cp ca.crt /etc/docker/certs.d/ORG.com/
+
+
+
+
+
+##https://goharbor.io/docs/2.1.0/install-config/configure-https/
