@@ -1,2 +1,2 @@
 # harbor-registry
-Tutorial: https://whitematter.tech/2021/how-to-run-a-locally-hosted-docker-registry-gui-with-harbor/
+Tutorial: https://whitematter.tech/posts/how-to-run-a-locally-hosted-docker-registry-gui-with-harbor/how-to-run-a-locally-hosted-docker-registry-gui-with-harbor/
